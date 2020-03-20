@@ -30,10 +30,11 @@ public class LocationsTasks {
     private ObjectMapper mapper = new ObjectMapper();
 
     public List<City> fetchCitiesFromML(String stateId) {
-        try{
+        try {
             HashMap resp = HttpService.get("https://api.mercadolibre.com/classified_locations/states/" + stateId, HashMap.class);
-            return mapper.convertValue(resp.get("cities"), new TypeReference<List<City>>() {});
-        }catch (IOException e){
+            return mapper.convertValue(resp.get("cities"), new TypeReference<List<City>>() {
+            });
+        } catch (IOException e) {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.NO_CONTENT);
         }
@@ -41,10 +42,11 @@ public class LocationsTasks {
     }
 
     public List<Neighborhood> fetchHoodsFromML(String cityId) {
-        try{
+        try {
             HashMap response = HttpService.get("https://api.mercadolibre.com/classified_locations/cities/" + cityId, HashMap.class);
-            return mapper.convertValue(response.get("neighborhoods"), new TypeReference<List<Neighborhood>>() {});
-        }catch (IOException e){
+            return mapper.convertValue(response.get("neighborhoods"), new TypeReference<List<Neighborhood>>() {
+            });
+        } catch (IOException e) {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.NO_CONTENT);
         }

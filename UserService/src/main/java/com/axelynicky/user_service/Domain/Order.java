@@ -33,7 +33,7 @@ public class Order {
 
     Float totalPrice;
 
-    @ElementCollection(targetClass =  Eatable.class)
+    @ElementCollection(targetClass = Eatable.class)
     @CollectionTable(name = "eatable")
     List<Eatable> eatables;
 }

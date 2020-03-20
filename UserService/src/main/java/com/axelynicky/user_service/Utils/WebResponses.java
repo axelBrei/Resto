@@ -41,10 +41,11 @@ public class WebResponses {
 
     @Data
     private static class Response {
-        public Response(String message, @Nullable Object body){
+        public Response(String message, @Nullable Object body) {
             this.message = message;
             this.body = body;
         }
+
         String message;
         Object body;
     }

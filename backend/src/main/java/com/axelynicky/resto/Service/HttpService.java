@@ -35,7 +35,7 @@ public class HttpService {
                 .url(url);
     }
 
-    public static <T> T get(String url, Class<T> objectClass)  throws IOException{
+    public static <T> T get(String url, Class<T> objectClass) throws IOException {
         Request request = buildRequest(url).get().build();
         Response response = client.newCall(request).execute();
 

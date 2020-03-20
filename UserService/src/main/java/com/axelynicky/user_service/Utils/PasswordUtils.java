@@ -54,12 +54,12 @@ public class PasswordUtils {
 
 
     public String decrypt(String encryptedString) {
-        String decryptedText=null;
+        String decryptedText = null;
         try {
             cipher.init(Cipher.DECRYPT_MODE, key);
             byte[] encryptedText = Base64.decodeBase64(encryptedString);
             byte[] plainText = cipher.doFinal(encryptedText);
-            decryptedText= new String(plainText);
+            decryptedText = new String(plainText);
         } catch (Exception e) {
             e.printStackTrace();
         }

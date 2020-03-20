@@ -12,6 +12,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 
-public interface CitiesRepository  extends CrudRepository<City,String> {
+public interface CitiesRepository extends CrudRepository<City, String> {
 
 }

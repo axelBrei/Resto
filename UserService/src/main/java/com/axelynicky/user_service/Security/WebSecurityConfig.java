@@ -15,9 +15,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/login/signin").permitAll()
-                .antMatchers(HttpMethod.POST,"/signup/register").permitAll()
+                .antMatchers(HttpMethod.POST, "/login/signin").permitAll()
+                .antMatchers(HttpMethod.POST, "/signup/register").permitAll()
                 .antMatchers(HttpMethod.GET, "/login/reauthenticate").permitAll()
+                .antMatchers("/swagger-ui.html", "/swagger-ui.html#/").permitAll()
+                .antMatchers("/v2/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**").permitAll()
                 .anyRequest().authenticated();
         http.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 

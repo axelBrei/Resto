@@ -3,6 +3,7 @@ package com.axelynicky.user_service.Controller;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.axelynicky.user_service.Domain.Client;
 import com.axelynicky.user_service.Repository.ClientRepository;
+import com.axelynicky.user_service.Service.Login.LoginService;
 import com.axelynicky.user_service.Utils.JwtTokenUtility;
 import com.axelynicky.user_service.Utils.PasswordUtils;
 import com.axelynicky.user_service.Utils.WebResponses;
@@ -23,49 +24,21 @@ import java.util.Optional;
 @RequestMapping("login")
 public class LogInController {
 
-
     @Autowired
-    ClientRepository clientRepository;
-
-    JwtTokenUtility jwtTokenUtility = new JwtTokenUtility();
+    LoginService loginService;
 
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
-    public ResponseEntity signIn(@RequestBody UserCredentials credentials){
-        try{
-            PasswordUtils passwordUtils = new PasswordUtils();
-            Optional<Client> databseResponse =
-                    clientRepository.findClientByNameAndPassword(
-                        credentials.getUsername(),
-                        passwordUtils.encrypt(credentials.getPassword())
-                    );
-            Client client = databseResponse.get();
-            String token = jwtTokenUtility.generateToken(client);
-            return WebResponses.ok(token);
-        }catch (NoSuchElementException e){
-            return WebResponses.notFound(null, "Credenciales invalidas");
-        } catch (Exception e){
-            e.printStackTrace();
-            return WebResponses.badRequest(null, "Ha ocurrido un error al intentar decodificar la contraseña");
-        }
+    public ResponseEntity signIn(@RequestBody UserCredentials credentials) {
+        return WebResponses.ok(
+                loginService.login(credentials)
+        );
     }
 
     @RequestMapping(value = "/reauthenticate", method = RequestMethod.GET)
-    public ResponseEntity reAuthenticate(@RequestHeader(value = "Authorization", required = false) String bearerToken) {
+    public ResponseEntity reAuthenticate(@RequestHeader(value = "Authorization") String bearerToken) {
 
-        try {
-            String token = bearerToken.substring(7);
-            if(!token.startsWith("Bearer ")){
-                throw new NullPointerException("");
-            }
-            if(jwtTokenUtility.isValidToken(token)) {
-                Client client = jwtTokenUtility.getAllClaimsFromToken(token);
-                return WebResponses.ok(jwtTokenUtility.generateToken(client));
-            }else
-                return WebResponses.notFound(token, "El token proporcionado es invalido");
-        }catch (JWTVerificationException e){
-            return WebResponses.badRequest(null, "Error al intentar validar el token");
-        }catch (NullPointerException e){
-            return WebResponses.badRequest(null, "No se ha proporcionado un metodo de autentificacion");
-        }
+        return WebResponses.ok(
+                loginService.reAuthenticate(bearerToken)
+        );
     }
 }

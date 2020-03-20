@@ -24,8 +24,7 @@ public class JwtTokenUtility {
     private static final String USERNAME_CLAIM = "username";
     private static final String LAST_NAME_CLAIM = "lastName";
     private static final String SECRET = "nickyteamo";
-    private static final Algorithm  ALGORITHM = Algorithm.HMAC512(SECRET);
-
+    private static final Algorithm ALGORITHM = Algorithm.HMAC512(SECRET);
 
 
     //for retrieveing any information from token we will need the secret key
@@ -54,7 +53,7 @@ public class JwtTokenUtility {
         return builder.sign(ALGORITHM);
     }
 
-    public Boolean isValidToken(String token) throws JWTVerificationException{
+    public Boolean isValidToken(String token) throws JWTVerificationException {
         JWTVerifier verifier = JWT.require(ALGORITHM).build();
         DecodedJWT decodedJWT = verifier.verify(token);
         Client client = getAllClaimsFromToken(token);

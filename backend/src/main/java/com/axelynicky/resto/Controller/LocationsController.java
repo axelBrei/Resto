@@ -40,12 +40,13 @@ public class LocationsController {
 
     @RequestMapping(value = "states", method = RequestMethod.GET)
     public ResponseEntity poblateStates() {
-        try{
-            HashMap<String,Object> container = HttpService.get("https://api.mercadolibre.com/classified_locations/countries/AR", HashMap.class);
-            List<State> list = mapper.convertValue(container.get("states"), new TypeReference<List<State>>() {});
+        try {
+            HashMap<String, Object> container = HttpService.get("https://api.mercadolibre.com/classified_locations/countries/AR", HashMap.class);
+            List<State> list = mapper.convertValue(container.get("states"), new TypeReference<List<State>>() {
+            });
             statesRepository.saveAll(list);
             return ResponseEntity.ok(new ListContainer<>(list));
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -57,7 +58,7 @@ public class LocationsController {
         State state = optionalState
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if(state != null && state.getCities().isEmpty()){
+        if (state != null && state.getCities().isEmpty()) {
             List<City> cities = locationsTasks.fetchCitiesFromML(stateId);
             state.setCities(cities);
             ((Runnable) () -> statesRepository.saveAndFlush(state)).run();
@@ -70,10 +71,10 @@ public class LocationsController {
         Optional<City> cityOptional = citiesRepository.findById(cityId);
         City city = cityOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if( city.getNeighborhoods().isEmpty()) {
+        if (city.getNeighborhoods().isEmpty()) {
             List<Neighborhood> neighborhoods = locationsTasks.fetchHoodsFromML(cityId);
             city.setNeighborhoods(neighborhoods);
-            ( (Runnable) () -> citiesRepository.save(city)).run();
+            ((Runnable) () -> citiesRepository.save(city)).run();
         }
 
         return ResponseEntity.ok(city.getNeighborhoods());

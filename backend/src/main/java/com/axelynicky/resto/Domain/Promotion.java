@@ -13,7 +13,8 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "promotions")

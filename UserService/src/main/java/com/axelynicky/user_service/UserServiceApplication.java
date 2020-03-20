@@ -19,12 +19,5 @@ public class UserServiceApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(UserServiceApplication.class, args);
-
-        Client client = new Client();
-        client.setId(Long.parseLong("34523452345"));
-        client.setName("hola");
-        client.setLastName("hola");
-        String token = new JwtTokenUtility().generateToken(client);
-        token.length();
     }
 }

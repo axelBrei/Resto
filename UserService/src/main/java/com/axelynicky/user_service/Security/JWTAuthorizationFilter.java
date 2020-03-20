@@ -28,7 +28,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private final String PREFIX = "Bearer ";
 
 
-
     JwtTokenUtility jwtTokenUtility = new JwtTokenUtility();
 
     private String getTokenFromRequest(HttpServletRequest request) {
@@ -44,7 +43,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 Client client = jwtTokenUtility.getAllClaimsFromToken(token);
 
                 List<? extends GrantedAuthority> authorities = Arrays.asList(
-                  new SimpleGrantedAuthority(client.getName())
+                        new SimpleGrantedAuthority(client.getName())
                 );
 
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(client.getId(), client, authorities);
