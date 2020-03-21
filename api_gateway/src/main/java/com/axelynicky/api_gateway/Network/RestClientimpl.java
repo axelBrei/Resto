@@ -2,6 +2,7 @@ package com.axelynicky.api_gateway.Network;
 
 import com.axelynicky.api_gateway.Domain.QueryParam;
 import com.axelynicky.api_gateway.Domain.RestClientResponse;
+import com.axelynicky.api_gateway.Utils.JwtTokenUtility;
 import com.google.gson.Gson;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import javax.xml.ws.Response;
 
 @Component
 public class RestClientimpl  implements RestClient{
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER = "Bearer ";
 
     @Autowired
     RestTemplate restTemplate;
@@ -28,18 +31,21 @@ public class RestClientimpl  implements RestClient{
     String serverAddres = "http://localhost:8080/";
     private HttpHeaders headers;
     private Gson gson;
+    private JwtTokenUtility tokenUtility;
 
     @Autowired
     private void addHeaders() {
         headers = new HttpHeaders();
+        tokenUtility = new JwtTokenUtility();
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "*/*");
+        headers.add(AUTHORIZATION_HEADER, BEARER + tokenUtility.createAutorizationToken());
     }
-
     @Autowired
-    public void createGson() {
+    public void init() {
         gson = new Gson();
     }
+
 
     @Override
     public <T> RestClientResponse<T> get(String url, Class<T> classType) {

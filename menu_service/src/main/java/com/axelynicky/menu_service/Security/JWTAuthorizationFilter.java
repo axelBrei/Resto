@@ -1,0 +1,68 @@
+package com.axelynicky.menu_service.Security;
+
+import com.auth0.jwt.exceptions.JWTVerificationException;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+public class JWTAuthorizationFilter extends OncePerRequestFilter {
+
+    private final String HEADER = "Authorization";
+    private final String PREFIX = "Bearer ";
+
+
+    JwtTokenUtility jwtTokenUtility = new JwtTokenUtility();
+
+    private String getTokenFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader(HEADER);
+        return bearerToken.substring(7).trim();
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        try {
+            if (existeJWTToken(request, response)) {
+                String token = getTokenFromRequest(request);
+                if(jwtTokenUtility.isValidAuthorizationToken(token)) {
+                    String subject = jwtTokenUtility.getTokenSubject(token);
+
+                    List<? extends GrantedAuthority> authorities = Arrays.asList(
+                            new SimpleGrantedAuthority(subject)
+                    );
+
+                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(subject, token, authorities);
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
+            }else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Autorizacion incorrecta");
+            }
+            chain.doFilter(request, response);
+        } catch (JWTVerificationException e) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Autorizacion incorrecta");
+            return;
+        }
+    }
+
+    private boolean existeJWTToken(HttpServletRequest request, HttpServletResponse res) {
+        String authenticationHeader = request.getHeader(HEADER);
+        if (authenticationHeader == null || !authenticationHeader.startsWith(PREFIX))
+            return false;
+        return true;
+    }
+
+}

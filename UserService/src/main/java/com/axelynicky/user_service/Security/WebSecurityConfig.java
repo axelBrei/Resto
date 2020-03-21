@@ -1,4 +1,4 @@
-package com.axelynicky.api_gateway.Security;
+package com.axelynicky.user_service.Security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,7 +15,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/users/login","/client/register/newUser").permitAll()
+                .antMatchers(HttpMethod.POST,"/register/newUser").permitAll()
                 .antMatchers("/**/v2/api-docs").permitAll()
                 .antMatchers("/v2/api-docs",
                         "/configuration/ui",
@@ -27,4 +27,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }
+
+
 }

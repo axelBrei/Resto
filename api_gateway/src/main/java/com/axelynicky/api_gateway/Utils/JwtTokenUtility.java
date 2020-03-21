@@ -21,6 +21,7 @@ public class JwtTokenUtility {
     private static final String USERNAME_CLAIM = "username";
     private static final String LAST_NAME_CLAIM = "lastName";
     private static final String SECRET = "nickyteamo";
+    private static final String API_SUBJECT = "resto-gateway";
     private static final Algorithm ALGORITHM = Algorithm.HMAC512(SECRET);
 
 
@@ -55,5 +56,23 @@ public class JwtTokenUtility {
         DecodedJWT decodedJWT = verifier.verify(token);
         Client client = getAllClaimsFromToken(token);
         return decodedJWT.getAlgorithm().equals(ALGORITHM.getName()) && client.getName().equals(decodedJWT.getSubject());
+    }
+
+    public String createAutorizationToken() {
+        return JWT.create()
+                .withSubject(API_SUBJECT)
+                .withClaim(USERNAME_CLAIM, API_SUBJECT)
+                .withIssuedAt(new Date())
+                .sign(ALGORITHM);
+    }
+
+    public Boolean isValidAuthorizationToken(String token) {
+        JWTVerifier verifier = JWT.require(ALGORITHM).build();
+        try {
+            DecodedJWT decodedJWT = verifier.verify(token);
+            return decodedJWT.getSubject().equals(API_SUBJECT) && decodedJWT.getClaim(USERNAME_CLAIM).equals(API_SUBJECT);
+        }catch (JWTVerificationException e){
+            return false;
+        }
     }
 }

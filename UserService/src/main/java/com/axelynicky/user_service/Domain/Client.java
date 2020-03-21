@@ -1,5 +1,7 @@
 package com.axelynicky.user_service.Domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +39,9 @@ public class Client {
     String name;
     @NonNull
     String lastName;
+
     @NonNull
+    @JsonIgnore
     String password;
     @NonNull
     String mail;
