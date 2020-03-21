@@ -7,6 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -44,10 +45,13 @@ public class Client {
     Float fiability;
     Date signUpDate;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     List<Favorite> favorites;
 
     @ElementCollection(targetClass = Favorite.class)
     @CollectionTable(name = "visit")
     List<Visit> visits;
+
+    @ElementCollection(targetClass = Long.class)
+    List<Long> reviewsId;
 }

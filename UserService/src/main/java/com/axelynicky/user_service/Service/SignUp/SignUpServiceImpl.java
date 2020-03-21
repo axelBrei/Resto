@@ -3,7 +3,6 @@ package com.axelynicky.user_service.Service.SignUp;
 import com.axelynicky.user_service.Domain.Client;
 import com.axelynicky.user_service.Exceptions.BadRequestException;
 import com.axelynicky.user_service.Repository.ClientRepository;
-import com.axelynicky.user_service.Utils.JwtTokenUtility;
 import com.axelynicky.user_service.Utils.PasswordUtils;
 import com.axelynicky.user_service.WebModels.LoginResponse;
 import com.axelynicky.user_service.WebModels.NewUserRequest;
@@ -19,15 +18,9 @@ public class SignUpServiceImpl implements SignUpService {
     @Autowired
     ClientRepository clientRepository;
 
-    JwtTokenUtility tokenUtility;
-
-    @Autowired
-    public void createUtil() {
-        tokenUtility = new JwtTokenUtility();
-    }
 
     @Override
-    public LoginResponse register(NewUserRequest request) throws BadRequestException {
+    public Client register(NewUserRequest request) throws BadRequestException {
         PasswordUtils pu;
         try {
             pu = new PasswordUtils();
@@ -43,10 +36,8 @@ public class SignUpServiceImpl implements SignUpService {
         );
         client.setSignUpDate(new Date());
         client.setFiability(0.0f);
-        clientRepository.save(client);
-        return new LoginResponse(
-                tokenUtility.generateToken(client),
-                client
-        );
+        client.setPassword(encriptedPass);
+        client = clientRepository.registerNewClient(client);
+        return client;
     }
 }

@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,12 +29,10 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToOne
-    Restorant restorant;
+    Long restorantId;
 
-    @ManyToOne
-    Client client;
+    @ElementCollection(targetClass = Long.class)
+    List<Long> eatablesIdList;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    List<Eatable> eatables;
+    Long clientId;
 }

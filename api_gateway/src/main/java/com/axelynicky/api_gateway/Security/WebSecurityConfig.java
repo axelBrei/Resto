@@ -1,4 +1,4 @@
-package com.axelynicky.user_service.Security;
+package com.axelynicky.api_gateway.Security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,10 +15,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/login/signin").permitAll()
-                .antMatchers(HttpMethod.POST, "/signup/register").permitAll()
-                .antMatchers(HttpMethod.GET, "/login/reauthenticate").permitAll()
-                .antMatchers("/swagger-ui.html", "/swagger-ui.html#/").permitAll()
+                .antMatchers(HttpMethod.POST, "/users/login").permitAll()
+                .antMatchers("/**/v2/api-docs").permitAll()
                 .antMatchers("/v2/api-docs",
                         "/configuration/ui",
                         "/swagger-resources/**",

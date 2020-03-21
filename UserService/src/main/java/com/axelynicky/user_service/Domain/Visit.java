@@ -21,10 +21,7 @@ public class Visit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToOne(targetEntity = Restorant.class)
-    Restorant restorant;
+    Long restorantId;
 
-    @OneToOne(targetEntity = Order.class)
-    Order order;
-    // TOOD add relations and orders
+    Long orderId;
 }

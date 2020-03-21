@@ -1,8 +1,9 @@
-package com.axelynicky.user_service.Security;
+package com.axelynicky.api_gateway.Security;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.axelynicky.user_service.Domain.Client;
-import com.axelynicky.user_service.Utils.JwtTokenUtility;
+import com.axelynicky.api_gateway.Domain.Client;
+import com.axelynicky.api_gateway.Service.Client.ClientService;
+import com.axelynicky.api_gateway.Utils.JwtTokenUtility;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +15,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -27,6 +27,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private final String HEADER = "Authorization";
     private final String PREFIX = "Bearer ";
 
+    @Autowired
+    ClientService clientService;
 
     JwtTokenUtility jwtTokenUtility = new JwtTokenUtility();
 

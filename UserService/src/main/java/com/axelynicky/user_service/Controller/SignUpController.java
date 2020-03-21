@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/signup")
+@RequestMapping("/register")
 public class SignUpController {
 
     @Autowired
     SignUpService signUpService;
 
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/newUser", method = RequestMethod.POST)
     public ResponseEntity createNewUser(@RequestBody NewUserRequest body) {
         return WebResponses.ok(
                 signUpService.register(body)
