@@ -12,6 +12,6 @@ import java.util.Optional;
 public interface ClientRepository extends JpaRepository<Client, Long> {
     Optional<Client> findClientByNameAndPassword(String name, String pass);
 
-    @Query(value = "SELECT * FROM insert_new_user(:#{#client.name}, :#{#client.password}, :#{#client.mail}, :#{#client.lastName})", nativeQuery = true)
+    @Query(value = "SELECT * FROM insert_new_user(:#{#client.name}, :#{#client.password}, :#{#client.mail}, :#{#client.lastName}, :#{#client.role.name})", nativeQuery = true)
     Client registerNewClient(@Param("client") Client client);
 }

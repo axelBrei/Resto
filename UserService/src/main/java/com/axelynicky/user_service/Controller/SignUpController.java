@@ -5,6 +5,7 @@ import com.axelynicky.user_service.Utils.WebResponses;
 import com.axelynicky.user_service.WebModels.NewUserRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +22,10 @@ public class SignUpController {
     SignUpService signUpService;
 
 
-    @RequestMapping(value = "/newUser", method = RequestMethod.POST)
+    @RequestMapping(value = "/newUser", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity createNewUser(@RequestBody NewUserRequest body) throws ResponseStatusException {
         return WebResponses.ok(
-                signUpService.register(body)
+                signUpService.registerClient(body)
         );
     }
 }

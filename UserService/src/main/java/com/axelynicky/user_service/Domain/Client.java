@@ -13,7 +13,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.AccessLevel;
@@ -47,7 +49,11 @@ public class Client {
     String mail;
 
     Float fiability;
+
     Date signUpDate;
+
+    @OneToOne
+    Role role;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     List<Favorite> favorites;

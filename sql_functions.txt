@@ -28,19 +28,31 @@ $BODY$
 $BODY$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION insert_new_user(username varchar, new_password varchar, new_mail varchar, new_last_name varchar)
+CREATE OR REPLACE FUNCTION insert_new_user(username varchar, new_password varchar, new_mail varchar, new_last_name varchar, role varchar)
 RETURNS SETOF clients AS
 $BODY$
     BEGIN
         IF verify_new_user_existance(username, new_mail)
         THEN
-            RETURN QUERY INSERT INTO clients as c (fiability, last_name, mail, name, password, sign_up_date)
-            VALUES (0.0,new_last_name, new_mail, username, new_password, current_timestamp)
+            RETURN QUERY INSERT INTO clients as c (fiability, last_name, mail, name, password, sign_up_date, role_id)
+            VALUES (0.0,new_last_name, new_mail, username, new_password, current_timestamp,
+                    (
+                        SELECT r.id
+                        FROM roles r
+                        WHERE r.name = role
+                        )
+                    )
             RETURNING *;
 
         ELSE
+
             RAISE EXCEPTION 'Error al insertar usuario en la base de datos';
         END IF;
     END;
 $BODY$
 LANGUAGE plpgsql;
+
+
+INSERT INTO roles (id,name) VALUES (1,'ADMIN');
+INSERT INTO roles (id,name) VALUES (2,'RESTORAN');
+INSERT INTO roles (id,name) VALUES (3,'CLIENTE');

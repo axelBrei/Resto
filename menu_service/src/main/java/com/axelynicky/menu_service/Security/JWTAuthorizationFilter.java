@@ -1,7 +1,9 @@
 package com.axelynicky.menu_service.Security;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.axelynicky.menu_service.Domain.Client;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.security.AccessControlContext;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,47 +26,71 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     private final String HEADER = "Authorization";
     private final String PREFIX = "Bearer ";
+    private static final String ACCES_TOKEN_HEADER = "ACCESS_TOKEN";
+    private static final String USER_TOKEN_HEADER = "USER_TOKEN";
 
 
     JwtTokenUtility jwtTokenUtility = new JwtTokenUtility();
 
-    private String getTokenFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader(HEADER);
+    private String getTokenFromRequest(HttpServletRequest request, String tokenType) {
+        String bearerToken = request.getHeader(tokenType);
         return bearerToken.substring(7).trim();
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
         try {
-            if (existeJWTToken(request, response)) {
-                String token = getTokenFromRequest(request);
-                if(jwtTokenUtility.isValidAuthorizationToken(token)) {
-                    String subject = jwtTokenUtility.getTokenSubject(token);
+            if (existeJWTToken(request, ACCES_TOKEN_HEADER)) {
+                String accesToken = getTokenFromRequest(request, ACCES_TOKEN_HEADER);
+                if(jwtTokenUtility.isValidAuthorizationToken(accesToken)) {
+                    String subject = jwtTokenUtility.getTokenSubject(accesToken);
+
 
                     List<? extends GrantedAuthority> authorities = Arrays.asList(
                             new SimpleGrantedAuthority(subject)
                     );
 
-                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(subject, token, authorities);
+                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(subject, null, authorities);
+
+                    if(existeJWTToken(request, USER_TOKEN_HEADER)){
+                        String userToken = getTokenFromRequest(request, USER_TOKEN_HEADER);
+                        Client client = jwtTokenUtility.getAllClaimsFromToken(userToken);
+                        if(!client.getRole().getName().isEmpty()) {
+                            authorities = Arrays.asList(
+                                    new SimpleGrantedAuthority("ROLE_" + client.getRole().getName())
+                            );
+                            auth = new UsernamePasswordAuthenticationToken(client, null, authorities);
+                        }
+                    }
+
                     SecurityContextHolder.getContext().setAuthentication(auth);
+                    chain.doFilter(request,response);
+                    return;
                 }
-            }else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Autorizacion incorrecta");
             }
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Autorizacion incorrecta");
             chain.doFilter(request, response);
         } catch (JWTVerificationException e) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Autorizacion incorrecta");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Autorizacion incorrecta");
             return;
+        }catch (Exception e){
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Autorizacion incorrecta");
         }
     }
 
-    private boolean existeJWTToken(HttpServletRequest request, HttpServletResponse res) {
-        String authenticationHeader = request.getHeader(HEADER);
+
+
+
+    private boolean existeJWTToken(HttpServletRequest request, String tokenType) {
+        String authenticationHeader = request.getHeader(tokenType);
         if (authenticationHeader == null || !authenticationHeader.startsWith(PREFIX))
             return false;
         return true;
     }
+
+
 
 }

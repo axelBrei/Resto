@@ -1,5 +1,7 @@
 package com.axelynicky.api_gateway;
 
+import com.axelynicky.api_gateway.Configuration.ZuulFilter;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -27,5 +29,10 @@ public class ApiGatewayApplication {
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder.build();
+    }
+
+    @Bean
+    public ZuulFilter simpleFilter() {
+        return new ZuulFilter();
     }
 }

@@ -19,7 +19,7 @@ public class FavoriteController {
     @Autowired
     FavoriteService favoriteService;
 
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    @RequestMapping(value = "/client/get", method = RequestMethod.GET)
     public ResponseEntity getClientFavorites(@RequestParam("clientId") Long clientId) {
         List<Favorite> favoriteList = favoriteService.getClientFavorites(clientId);
         favoriteList.size();

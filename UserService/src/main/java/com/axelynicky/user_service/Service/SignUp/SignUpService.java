@@ -6,5 +6,9 @@ import com.axelynicky.user_service.WebModels.LoginResponse;
 import com.axelynicky.user_service.WebModels.NewUserRequest;
 
 public interface SignUpService {
-    Client register(NewUserRequest request) throws BadRequestException;
+    Client registerClient(NewUserRequest request) throws BadRequestException;
+
+    Client registerRestorant(NewUserRequest request) throws BadRequestException;
+
+    Client registerAdmin(NewUserRequest request) throws BadRequestException;
 }

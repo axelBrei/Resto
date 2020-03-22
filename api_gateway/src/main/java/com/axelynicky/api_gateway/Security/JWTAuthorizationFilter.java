@@ -45,10 +45,10 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 Client client = jwtTokenUtility.getAllClaimsFromToken(token);
 
                 List<? extends GrantedAuthority> authorities = Arrays.asList(
-                        new SimpleGrantedAuthority(client.getName())
+                        new SimpleGrantedAuthority(client.getRole().getName())
                 );
 
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(client.getId(), client, authorities);
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(client, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
             chain.doFilter(request, response);

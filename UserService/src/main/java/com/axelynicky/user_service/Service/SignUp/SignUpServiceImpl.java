@@ -1,6 +1,7 @@
 package com.axelynicky.user_service.Service.SignUp;
 
 import com.axelynicky.user_service.Domain.Client;
+import com.axelynicky.user_service.Domain.Role;
 import com.axelynicky.user_service.Exceptions.BadRequestException;
 import com.axelynicky.user_service.Repository.ClientRepository;
 import com.axelynicky.user_service.Utils.PasswordUtils;
@@ -16,13 +17,14 @@ import java.util.Date;
 
 @Component
 public class SignUpServiceImpl implements SignUpService {
+    private static final String ROLE_ADMIN = "ADMIN";
+    private static final String ROLE_CLIENT = "CLIENTE";
+    private static final String ROLE_RESTO = "RESTORAN";
 
     @Autowired
     ClientRepository clientRepository;
 
-
-    @Override
-    public Client register(NewUserRequest request) throws BadRequestException {
+    private Client getClient(NewUserRequest request, Role role) {
         PasswordUtils pu;
         try {
             pu = new PasswordUtils();
@@ -36,9 +38,14 @@ public class SignUpServiceImpl implements SignUpService {
                 encriptedPass,
                 request.getMail()
         );
+        client.setRole(role);
         client.setSignUpDate(new Date());
         client.setFiability(0.0f);
         client.setPassword(encriptedPass);
+        return submitNewClient(client);
+    }
+
+    private Client submitNewClient(Client client) {
         try{
             client = clientRepository.registerNewClient(client);
         }catch (RuntimeException e){
@@ -48,5 +55,20 @@ public class SignUpServiceImpl implements SignUpService {
             }
         }
         return client;
+    }
+
+    @Override
+    public Client registerClient(NewUserRequest request) throws BadRequestException {
+        return  getClient(request, new Role(ROLE_CLIENT));
+    }
+
+    @Override
+    public Client registerRestorant(NewUserRequest request) throws BadRequestException {
+        return getClient(request, new Role(ROLE_RESTO));
+    }
+
+    @Override
+    public Client registerAdmin(NewUserRequest request) throws BadRequestException {
+        return getClient(request, new Role(ROLE_ADMIN));
     }
 }

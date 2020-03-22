@@ -1,4 +1,4 @@
-package com.axelynicky.api_gateway.Domain;
+package com.axelynicky.menu_service.Domain;
 
 import java.util.Date;
 

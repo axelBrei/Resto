@@ -22,7 +22,7 @@ import javax.xml.ws.Response;
 
 @Component
 public class RestClientimpl  implements RestClient{
-    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String AUTHORIZATION_HEADER = "ACCESS_TOKEN";
     private static final String BEARER = "Bearer ";
 
     @Autowired

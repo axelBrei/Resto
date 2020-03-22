@@ -7,6 +7,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.axelynicky.api_gateway.Domain.Client;
+import com.axelynicky.api_gateway.Domain.Role;
 
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,7 @@ public class JwtTokenUtility {
     private static final String USER_ID_CLAIM = "userId";
     private static final String USERNAME_CLAIM = "username";
     private static final String LAST_NAME_CLAIM = "lastName";
+    private static final String ROLE_CLAIM = "role";
     private static final String SECRET = "nickyteamo";
     private static final String API_SUBJECT = "resto-gateway";
     private static final Algorithm ALGORITHM = Algorithm.HMAC512(SECRET);
@@ -32,6 +34,7 @@ public class JwtTokenUtility {
         client.setId(decodedJWT.getClaim(USER_ID_CLAIM).asLong());
         client.setName(decodedJWT.getClaim(USERNAME_CLAIM).asString());
         client.setLastName(decodedJWT.getClaim(LAST_NAME_CLAIM).asString());
+        client.setRole(new Role(decodedJWT.getClaim(ROLE_CLAIM).asString()));
         return client;
     }
 
@@ -39,7 +42,15 @@ public class JwtTokenUtility {
         return JWT.create()
                 .withClaim(USER_ID_CLAIM, client.getId())
                 .withClaim(USERNAME_CLAIM, client.getName())
+                .withClaim(ROLE_CLAIM, client.getRole().getName())
                 .withClaim(LAST_NAME_CLAIM, client.getLastName());
+    }
+
+    public Boolean isValidToken(String token) throws JWTVerificationException {
+        JWTVerifier verifier = JWT.require(ALGORITHM).build();
+        DecodedJWT decodedJWT = verifier.verify(token);
+        Client client = getAllClaimsFromToken(token);
+        return decodedJWT.getAlgorithm().equals(ALGORITHM.getName()) && client.getName().equals(decodedJWT.getSubject());
     }
 
     //generate token for user
@@ -51,12 +62,7 @@ public class JwtTokenUtility {
         return builder.sign(ALGORITHM);
     }
 
-    public Boolean isValidToken(String token) throws JWTVerificationException {
-        JWTVerifier verifier = JWT.require(ALGORITHM).build();
-        DecodedJWT decodedJWT = verifier.verify(token);
-        Client client = getAllClaimsFromToken(token);
-        return decodedJWT.getAlgorithm().equals(ALGORITHM.getName()) && client.getName().equals(decodedJWT.getSubject());
-    }
+
 
     public String createAutorizationToken() {
         return JWT.create()
