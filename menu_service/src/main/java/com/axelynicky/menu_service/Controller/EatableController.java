@@ -10,6 +10,7 @@ import com.axelynicky.menu_service.WebModel.WebResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.xml.ws.Response;
 
 @RestController
 @RequestMapping("/eatables")
@@ -42,12 +45,21 @@ public class EatableController {
         return ResponseEntity.ok(new WebResponse("Se ha elminiado con exito"));
     }
 
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    @RequestMapping(value = "/getForMenu", method = RequestMethod.GET)
     public ResponseEntity getEatablesForMenu(@RequestParam(value = "menuId") Long menuId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(
                         new WebResponse(eatableService.getEatablesForMenu(menuId))
+                );
+    }
+
+    @RequestMapping(value = "/getDetail", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getEatableDetail(@RequestParam("eatableId") Long eatableId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(
+                        new WebResponse(eatableService.getEatableDetail(eatableId))
                 );
     }
 

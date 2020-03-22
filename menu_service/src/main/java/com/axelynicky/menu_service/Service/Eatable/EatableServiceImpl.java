@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class EatableServiceImpl implements EatableService {
@@ -42,10 +43,11 @@ public class EatableServiceImpl implements EatableService {
 
     @Override
     public List<Eatable> getEatablesForMenu(Long menuId) throws NotFoundException {
+        // TODO: if the eatable have a promotion it should fetch it here
         return eatableRepository
                 .findAllByMenuId(menuId)
                 .orElseThrow(
-                        () -> new NotFoundException("No se ha encontrado consumibles")
+                        () -> new NotFoundException("No se han encontrado consumibles")
                 );
     }
 
@@ -61,5 +63,11 @@ public class EatableServiceImpl implements EatableService {
         }
 
         throw new NotModifiedException("No se ha modificado el consumible");
+    }
+
+    @Override
+    public Eatable getEatableDetail(Long eatableId) throws NotFoundException {
+        Optional<Eatable> databaseResponse = eatableRepository.findById(eatableId);
+        return databaseResponse.orElseThrow(() -> new NotFoundException("No se enocntro un consumible para el id proporcionado"));
     }
 }

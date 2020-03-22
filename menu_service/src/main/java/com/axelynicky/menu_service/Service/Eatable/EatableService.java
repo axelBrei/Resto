@@ -15,4 +15,6 @@ public interface EatableService {
     List<Eatable> getEatablesForMenu(Long menuId) throws NotFoundException;
 
     void updateEatable(UpdateEatableRequest request) throws NotFoundException, NotModifiedException;
+
+    Eatable getEatableDetail(Long eatableId) throws NotFoundException;
 }
