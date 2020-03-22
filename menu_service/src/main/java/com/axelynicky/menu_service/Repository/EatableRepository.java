@@ -5,6 +5,7 @@ import com.axelynicky.menu_service.Domain.Menu;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +18,6 @@ public interface EatableRepository extends JpaRepository<Eatable, Long> {
 
     Optional<Eatable> findByIdAndMenuId(Long id, Long menuId);
 
+    @Transactional
     void deleteByIdAndMenuId(Long id, Long menuId);
 }

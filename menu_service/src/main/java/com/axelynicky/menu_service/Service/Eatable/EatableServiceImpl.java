@@ -33,7 +33,11 @@ public class EatableServiceImpl implements EatableService {
 
     @Override
     public void removeEatable(Long menuId, Long eatableId) throws NotFoundException {
-        eatableRepository.deleteByIdAndMenuId(eatableId, menuId);
+        try{
+            eatableRepository.deleteByIdAndMenuId(eatableId, menuId);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

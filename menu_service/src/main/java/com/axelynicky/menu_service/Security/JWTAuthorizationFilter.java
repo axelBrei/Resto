@@ -77,7 +77,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             return;
         }catch (Exception e){
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Autorizacion incorrecta");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Ha ocurrido un error inesperado");
         }
     }
 

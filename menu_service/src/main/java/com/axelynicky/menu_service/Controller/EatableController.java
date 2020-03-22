@@ -36,14 +36,14 @@ public class EatableController {
     }
 
     @PreAuthorize("hasRole('ROLE_RESTORAN') OR hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/remove", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ResponseEntity removeEatableFromMenu(@RequestParam(value = "menuId") Long menuId, @RequestParam(value = "eatableId") Long eatableId) {
         eatableService.removeEatable(menuId, eatableId);
         return ResponseEntity.ok(new WebResponse("Se ha elminiado con exito"));
     }
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public ResponseEntity getEatablesForMenu(@RequestParam(value = "menuId", required = true) Long menuId) {
+    public ResponseEntity getEatablesForMenu(@RequestParam(value = "menuId") Long menuId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(
